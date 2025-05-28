@@ -8,4 +8,4 @@ The interface is built using ncurses
 
 ### Main Interface
 
-![Main Interface](assets/screenshot.png)
+![Main Interface](assets/Screenshot.png)
