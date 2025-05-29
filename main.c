@@ -16,6 +16,7 @@ typedef struct {
     int NoteOrder[12];
     int NoteCounter;
     int isKpressed;
+    int toggleList;
     const char* notes[12];
 
     int stopwatch_running;
@@ -44,6 +45,7 @@ void initModel(Model* model) {
     }
     model->NoteCounter = 0;
     model->isKpressed = 0;
+    model->toggleList = 0;
 
     const char* notesTemp[12] = {
         "A", "A#/Bb", "B", "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab"
@@ -74,6 +76,26 @@ double get_stopwatch_time(Model* model) {
     } else {
         return model->stopwatch_elapsed;
     }
+}
+
+void listNotes(Model* model){
+    int maxY, maxX;
+    const char *title = "Notes:";
+    getmaxyx(stdscr, maxY, maxX);
+    int height = 17, width = 10, starty = (maxY-height)/3, startx = (maxX-width)/2;
+    WINDOW *win = newwin(height, width, starty, startx);
+    mvwprintw(win, height-15, (width-strlen(title))/2, "%s", title);
+    box(win, 0, 0);
+    for (int i = 0; i < 12; i++) {
+        mvwprintw(win, 3+i, (width-strlen(model->notes[model->NoteOrder[i]]) )/2, "%s", model->notes[model->NoteOrder[i]] );
+    
+    }
+
+
+    wrefresh(win);    
+    delwin(win);
+
+
 }
 
 
@@ -118,30 +140,11 @@ void render(Model* model) {
     mvprintw(maxY - 2, maxX/6 + 2, "Reset");
     mvprintw(maxY - 3, maxX/3 + 2, "List Notes");
 
-    refresh();
-}
-
-void listNotes(Model* model){
-    generatePattern(model->NoteOrder, 12);
-    int maxY, maxX;
-    const char *title = "Notes:";
-    getmaxyx(stdscr, maxY, maxX);
-    int height = 17, width = 10, starty = (maxY-height)/3, startx = (maxX-width)/2;
-    WINDOW *win = newwin(height, width, starty, startx);
-    mvwprintw(win, height-15, (width-strlen(title))/2, "%s", title);
-    box(win, 0, 0);
-    for (int i = 0; i < 12; i++) {
-        mvwprintw(win, 3+i, (width-strlen(model->notes[model->NoteOrder[i]]) )/2, "%s", model->notes[model->NoteOrder[i]] );
-    
+    if(model->toggleList){
+    listNotes(model);
     }
 
-
-    wrefresh(win);    
-
-    wgetch(win);
-    delwin(win);
-    model->isKpressed = 0;
-    clear();
+    refresh();
 }
 
 void update(Model* model, int input) {
@@ -178,7 +181,12 @@ void update(Model* model, int input) {
             model->stopwatch_elapsed = 0;
             break;
         case 'l':
-            listNotes(model);
+            generatePattern(model->NoteOrder, 12);
+            model->isKpressed = 0;
+            model->toggleList = !model->toggleList;
+            if(model->toggleList == 0){
+            clear();
+            } 
             break;
         default:
             break;
