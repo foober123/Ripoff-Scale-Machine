@@ -12,14 +12,41 @@ void handle_winch(int sig) {
     resize_flag = 1;
 }
 
+typedef enum{
+keyQuit = (int)'q',
+keyNote = (int)'k',
+keyTime = (int)'t',
+keyResetTime = (int)'r',
+keyList = (int)'l'
+
+} controlKey ;
+
+typedef enum {
+    noteON = 1,
+    noteOFF = 0
+} notePressState ;
+
+typedef enum {
+    stopwatchON = 1,
+    stopwatchOFF = 0
+} stopwatchRunning ;
+
+typedef enum {
+    listON = 1,
+    listOFF = 0
+} listToggle;
+
 typedef struct {
+    controlKey keybind;
+    notePressState isKpressed;
+    stopwatchRunning stopwatch_running;
+    listToggle toggleList;
+
     int NoteOrder[12];
     int NoteCounter;
-    int isKpressed;
-    int toggleList;
+    
     const char* notes[12];
 
-    int stopwatch_running;
     struct timespec stopwatch_start;
     double stopwatch_elapsed;
 } Model;
@@ -44,8 +71,8 @@ void initModel(Model* model) {
         model->NoteOrder[i] = i;
     }
     model->NoteCounter = 0;
-    model->isKpressed = 0;
-    model->toggleList = 0;
+    model->isKpressed = noteOFF;
+    model->toggleList = listOFF;
 
     const char* notesTemp[12] = {
         "A", "A#/Bb", "B", "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab"
@@ -121,17 +148,21 @@ void render(Model* model) {
         clrtoeol();
         move(maxY / 6, (maxX - strlen(model->notes[model->NoteOrder[model->NoteCounter]])) - maxX/20);
         clrtoeol();
+
+        attron(COLOR_PAIR(1));
         mvprintw(maxY / 6, (maxX - strlen(model->notes[model->NoteOrder[model->NoteCounter]]) - maxX/20), "%s", model->notes[model->NoteOrder[model->NoteCounter]]);
         mvprintw(maxY / 6, maxX / 2 - 7, "%d", model->NoteCounter + 1);
+        attroff(COLOR_PAIR(1));
         mvprintw(maxY / 6, (maxX-strlen("out of 12")) / 2, "out of 12");
     }
 
+    //HELP BAR AT THE BOTTOM
     attron(A_REVERSE);
-    mvprintw(maxY - 3, 1, "k");
-    mvprintw(maxY - 2, 1, "q");
-    mvprintw(maxY - 3, maxX/6, "t");
-    mvprintw(maxY - 2, maxX/6, "r");
-    mvprintw(maxY - 3, maxX/3, "l");
+    mvprintw(maxY - 3, 1, "%c", keyNote);
+    mvprintw(maxY - 2, 1, "%c", keyQuit);
+    mvprintw(maxY - 3, maxX/6, "%c", keyTime);
+    mvprintw(maxY - 2, maxX/6, "%c", keyResetTime);
+    mvprintw(maxY - 3, maxX/3, "%c", keyList);
     attroff(A_REVERSE);
 
     mvprintw(maxY - 3, 3, "Next Note");
@@ -150,11 +181,12 @@ void render(Model* model) {
 void update(Model* model, int input) {
 
     switch (input) {
-        case 'k':
-            if (model->isKpressed == 0) {
+        case keyNote:
+                if (model->isKpressed == noteOFF) {
                 model->NoteCounter = 0;
-                model->isKpressed = 1;
+                model->isKpressed = noteON;
             } else {
+
                 if (model->NoteCounter < 11) {
                     model->NoteCounter++;
                 } else {
@@ -163,10 +195,10 @@ void update(Model* model, int input) {
                 }
             }
             break;
-         case 't':
-            if (!model->stopwatch_running) {
+         case keyTime:
+            if (model->stopwatch_running == stopwatchOFF) {
             clock_gettime(CLOCK_MONOTONIC, &model->stopwatch_start);
-            model->stopwatch_running = 1;
+            model->stopwatch_running = stopwatchON;
             } else {
             struct timespec now;
             clock_gettime(CLOCK_MONOTONIC, &now);
@@ -176,11 +208,11 @@ void update(Model* model, int input) {
             model->stopwatch_running = 0;
             }
             break;
-        case 'r':
+        case keyResetTime:
             model->stopwatch_running = 0;
             model->stopwatch_elapsed = 0;
             break;
-        case 'l':
+            case keyList:
             generatePattern(model->NoteOrder, 12);
             model->isKpressed = 0;
             model->toggleList = !model->toggleList;
@@ -198,8 +230,14 @@ int main() {
 
     Model model;
     initModel(&model);
+    
 
     initscr();
+
+    start_color();
+    use_default_colors();
+    init_pair(1, COLOR_RED, -1);
+
     cbreak();
     noecho();
     curs_set(0);
@@ -208,7 +246,7 @@ int main() {
     signal(SIGWINCH, handle_winch);
 
     int input = 0;
-    while (input != 'q') {
+    while (input != keyQuit) {
         if(resize_flag){
             resize_flag = 0;
             endwin();
