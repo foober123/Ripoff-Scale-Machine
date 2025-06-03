@@ -51,6 +51,11 @@ typedef struct {
     double stopwatch_elapsed;
 } Model;
 
+typedef struct{
+int maxY;
+int maxX;
+
+} screenInfo;
 
 
 
@@ -86,6 +91,9 @@ void initModel(Model* model) {
     model->stopwatch_elapsed = 0.0;
 }
 
+void initScreenInfo(screenInfo* screenInfo) {
+    getmaxyx(stdscr, screenInfo->maxY, screenInfo->maxX);
+}
 
 double get_time_seconds() {
     struct timespec ts;
@@ -105,11 +113,10 @@ double get_stopwatch_time(Model* model) {
     }
 }
 
-void listNotes(Model* model){
+void listNotes(Model* model, screenInfo* screenInfo){
     int maxY, maxX;
     const char *title = "Notes:";
-    getmaxyx(stdscr, maxY, maxX);
-    int height = 17, width = 10, starty = (maxY-height)/3, startx = (maxX-width)/2;
+    int height = 17, width = 10, starty = (screenInfo->maxY-height)/3, startx = (screenInfo->maxX-width)/2;
     WINDOW *win = newwin(height, width, starty, startx);
     mvwprintw(win, height-15, (width-strlen(title))/2, "%s", title);
     box(win, 0, 0);
@@ -122,57 +129,71 @@ void listNotes(Model* model){
     wrefresh(win);    
     delwin(win);
 
+}
+
+void drawHelpBar(screenInfo* screenInfo){
+    attron(A_REVERSE);
+    mvprintw(screenInfo->maxY - 3, 1, "%c", keyNote);
+    mvprintw(screenInfo->maxY - 2, 1, "%c", keyQuit);
+    mvprintw(screenInfo->maxY - 3, screenInfo->maxX/6, "%c", keyTime);
+    mvprintw(screenInfo->maxY - 2, screenInfo->maxX/6, "%c", keyResetTime);
+    mvprintw(screenInfo->maxY - 3, screenInfo->maxX/3, "%c", keyList);
+    attroff(A_REVERSE);
+
+    mvprintw(screenInfo->maxY - 3, 3, "Next Note");
+    mvprintw(screenInfo->maxY - 2, 3, "Quit");
+    mvprintw(screenInfo->maxY - 3, screenInfo->maxX/6 + 2, "Time");
+    mvprintw(screenInfo->maxY - 2, screenInfo->maxX/6 + 2, "Reset");
+    mvprintw(screenInfo->maxY - 3, screenInfo->maxX/3 + 2, "List Notes");
 
 }
 
+void drawNoteCount(Model *model, screenInfo* screenInfo){
+        move(screenInfo->maxY / 6, screenInfo->maxX / 4 - 2);
+        clrtoeol();
+        move(screenInfo->maxY / 6, (screenInfo->maxX - strlen(model->notes[model->NoteOrder[model->NoteCounter]])) - screenInfo->maxX/20);
+        clrtoeol();
 
-void render(Model* model) {
-    double elapsed = get_stopwatch_time(model);
-    int mins = (int)(elapsed / 60);
-    int secs = (int)elapsed % 60;
-    int centisecs = (int)((elapsed - (int)elapsed) * 100);
-    int maxY, maxX;
-    getmaxyx(stdscr, maxY, maxX);
+        attron(COLOR_PAIR(1));
+        mvprintw(screenInfo->maxY / 6, (screenInfo->maxX - strlen(model->notes[model->NoteOrder[model->NoteCounter]]) - screenInfo->maxX/20), "%s", model->notes[model->NoteOrder[model->NoteCounter]]);
+        mvprintw(screenInfo->maxY / 6, screenInfo->maxX / 2 - 7, "%d", model->NoteCounter + 1);
+        attroff(COLOR_PAIR(1));
+        mvprintw(screenInfo->maxY / 6, (screenInfo->maxX-strlen("out of 12")) / 2, "out of 12");
+
+}
+
+void drawStatics(screenInfo* screenInfo){
 
     char *title = "Ripoff Scale Machine";
     int title_length = strlen(title);
 
 
-    mvprintw(1, (maxX - title_length) / 2, "%s", title);
-    mvprintw(3, maxX - strlen("Stopwatch: %02d:%02d.%02d") , "Stopwatch: %02d:%02d.%02d", mins, secs, centisecs);
-    mvprintw(maxY / 6, maxX / 20, "Select From 12");
-    mvprintw(maxY / 6 + 1, maxX / 20, "Possible Keys");
+    mvprintw(1, (screenInfo->maxX - title_length) / 2, "%s", title);
+    mvprintw(screenInfo->maxY / 6, screenInfo->maxX / 20, "Select From 12");
+    mvprintw(screenInfo->maxY / 6 + 1, screenInfo->maxX / 20, "Possible Keys");
+}
+
+void drawStopwatch(Model* model, screenInfo* screenInfo){
+    double elapsed = get_stopwatch_time(model);
+    int mins = (int)(elapsed / 60);
+    int secs = (int)elapsed % 60;
+    int centisecs = (int)((elapsed - (int)elapsed) * 100);
+    mvprintw(3, screenInfo->maxX - strlen("Stopwatch: %02d:%02d.%02d") , "Stopwatch: %02d:%02d.%02d", mins, secs, centisecs);
+
+}
+
+void render(Model* model, screenInfo* screenInfo) {
+    drawStatics(screenInfo);
+    drawStopwatch(model, screenInfo);
 
     if (model->isKpressed) {
-        move(maxY / 6, maxX / 4 - 2);
-        clrtoeol();
-        move(maxY / 6, (maxX - strlen(model->notes[model->NoteOrder[model->NoteCounter]])) - maxX/20);
-        clrtoeol();
-
-        attron(COLOR_PAIR(1));
-        mvprintw(maxY / 6, (maxX - strlen(model->notes[model->NoteOrder[model->NoteCounter]]) - maxX/20), "%s", model->notes[model->NoteOrder[model->NoteCounter]]);
-        mvprintw(maxY / 6, maxX / 2 - 7, "%d", model->NoteCounter + 1);
-        attroff(COLOR_PAIR(1));
-        mvprintw(maxY / 6, (maxX-strlen("out of 12")) / 2, "out of 12");
+    drawNoteCount(model, screenInfo);
     }
 
-    //HELP BAR AT THE BOTTOM
-    attron(A_REVERSE);
-    mvprintw(maxY - 3, 1, "%c", keyNote);
-    mvprintw(maxY - 2, 1, "%c", keyQuit);
-    mvprintw(maxY - 3, maxX/6, "%c", keyTime);
-    mvprintw(maxY - 2, maxX/6, "%c", keyResetTime);
-    mvprintw(maxY - 3, maxX/3, "%c", keyList);
-    attroff(A_REVERSE);
-
-    mvprintw(maxY - 3, 3, "Next Note");
-    mvprintw(maxY - 2, 3, "Quit");
-    mvprintw(maxY - 3, maxX/6 + 2, "Time");
-    mvprintw(maxY - 2, maxX/6 + 2, "Reset");
-    mvprintw(maxY - 3, maxX/3 + 2, "List Notes");
+    drawHelpBar(screenInfo);
 
     if(model->toggleList){
-    listNotes(model);
+    listNotes(model, screenInfo);
     }
 
     refresh();
@@ -228,11 +249,13 @@ void update(Model* model, int input) {
 int main() {
     srand(time(NULL));
 
+    screenInfo screenInfo;
     Model model;
     initModel(&model);
     
 
     initscr();
+    initScreenInfo(&screenInfo);
 
     start_color();
     use_default_colors();
@@ -252,9 +275,10 @@ int main() {
             endwin();
             refresh();
             clear();
+            initScreenInfo(&screenInfo);
 
         }
-        render(&model);
+        render(&model, &screenInfo);
         input = getch();
         update(&model, input);
     }
