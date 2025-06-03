@@ -5,7 +5,8 @@ void update(Model* model, int input) {
                 if (model->isNotePressed == OFF) {
                 model->noteCounter = 0;
                 model->isNotePressed = ON;
-            } else {
+                break;
+                }
 
                 if (model->noteCounter < 11) {
                     model->noteCounter++;
@@ -13,7 +14,7 @@ void update(Model* model, int input) {
                     model->noteCounter = 0;
                     generatePattern(model->noteOrder, 12);
                 }
-            }
+                clear();
             break;
          case KEY_TIME:
             if (model->stopwatch_running == OFF) {
@@ -37,19 +38,21 @@ void update(Model* model, int input) {
             model->isNotePressed = OFF;
             model->toggleList = !model->toggleList;
             if(model->toggleList == OFF){
-            clear();
             } 
             break;
         case KEY_CYCLE_ROOT:
+            if(model->isScaleShown){
             model->parentScale = (model->parentScale + 1) % 12;
             rootToIonian(model->parentScaleOrder, model->parentScale);
             generatePattern(model->parentScaleOrder, 7);
             model->parentScaleOrderIndex = 0;
+            }
             break;
         case KEY_CYCLE_PARENT:
             if(model->isScaleShown == OFF){
             model->isScaleShown = ON;
             model->parentScaleOrderIndex = 0;
+            generatePattern(model->parentScaleOrder, 7);
             break;
             }
             

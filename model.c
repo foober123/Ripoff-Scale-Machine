@@ -58,7 +58,7 @@ void initModel(Model* model) {
     model->parentScaleOrderIndex = 0;
     rootToIonian(model->parentScaleOrder, model->parentScale);
     
-     model->stopwatch_running = 0;
+    model->stopwatch_running = 0;
     model->stopwatch_elapsed = 0.0;
 }
 

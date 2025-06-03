@@ -23,9 +23,9 @@ void handle_winch(int sig) {
     resize_flag = 1;
 }
 
-#include "model.h"
-#include "view.h"
-#include "controller.h"
+#include "model.c"
+#include "view.c"
+#include "controller.c"
 
 int main() {
     srand(time(NULL));

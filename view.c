@@ -38,31 +38,29 @@ void drawHelpBar(screenInfo* screenInfo){
 }
 
 void drawNoteCount(Model *model, screenInfo* screenInfo){
-
-        
         move(screenInfo->maxY / 6, screenInfo->maxX / 4 - 2);
         clrtoeol();
-        move(screenInfo->maxY / 6, (screenInfo->maxX - strlen(CHROMATICSCALE[model->noteOrder[model->noteCounter]])) - screenInfo->maxX/20);
+        move(screenInfo->maxY / 6, (screenInfo->maxX - strlen(CHROMATICSCALE[model->noteOrder[model->noteCounter]])) - screenInfo->maxX/15);
         clrtoeol();
 
         attron(COLOR_PAIR(1));
-        mvprintw(screenInfo->maxY / 6, (screenInfo->maxX - strlen(CHROMATICSCALE[model->noteOrder[model->noteCounter]]) - screenInfo->maxX/20), "%s", CHROMATICSCALE[model->noteOrder[model->noteCounter]]);
-        mvprintw(screenInfo->maxY / 6, screenInfo->maxX / 2 - 7, "%d", model->noteCounter + 1);
+        mvprintw(screenInfo->maxY / 6, (screenInfo->maxX - strlen(CHROMATICSCALE[model->noteOrder[model->noteCounter]]) - screenInfo->maxX/15), "%s", CHROMATICSCALE[model->noteOrder[model->noteCounter]]);
+        mvprintw(screenInfo->maxY / 6, screenInfo->maxX / 2 - 8, "%d", model->noteCounter + 1);
         attroff(COLOR_PAIR(1));
         mvprintw(screenInfo->maxY / 6, (screenInfo->maxX-strlen("out of 12")) / 2, "out of 12");
 
 }
 
 void drawParentScale(Model *model, screenInfo* screenInfo){
-        move(screenInfo->maxY / 4, (screenInfo->maxX - strlen(CHROMATICSCALE[model->noteOrder[model->noteCounter]]) - screenInfo->maxX/20));
+
+        move(screenInfo->maxY / 4, screenInfo->maxX/6);
         clrtoeol();
         move(screenInfo->maxY / 4 + 1, screenInfo->maxX / 2 - 6);
         clrtoeol();
 
         mvprintw(screenInfo->maxY / 4, (screenInfo->maxX-strlen("out of 7")) / 2, "out of 7");
-        
         attron(COLOR_PAIR(1));
-        mvprintw(screenInfo->maxY / 4, (screenInfo->maxX - strlen(CHROMATICSCALE[model->noteOrder[model->noteCounter]]) - screenInfo->maxX/20), "%s", CHROMATICSCALE[model->parentScaleOrder[model->parentScaleOrderIndex]]);
+        mvprintw(screenInfo->maxY / 4, (screenInfo->maxX - strlen(CHROMATICSCALE[model->parentScaleOrder[model->parentScaleOrderIndex]]) - screenInfo->maxX/15), "%s", CHROMATICSCALE[model->parentScaleOrder[model->parentScaleOrderIndex]]);
         mvprintw(screenInfo->maxY / 4, screenInfo->maxX / 2 - 6, "%d", model->parentScaleOrderIndex + 1);
         mvprintw(screenInfo->maxY / 4 + 1, screenInfo->maxX / 2 - 6, "%s", CHROMATICSCALE[model->parentScale]);
 
@@ -77,11 +75,11 @@ void drawStatics(screenInfo* screenInfo){
 
     mvprintw(1, (screenInfo->maxX - title_length) / 2, "%s", title);
         
-    mvprintw(screenInfo->maxY / 6, screenInfo->maxX / 20, "Select from 12");
-    mvprintw(screenInfo->maxY / 6 + 1, screenInfo->maxX / 20, "Possible keys");
+    mvprintw(screenInfo->maxY / 6, screenInfo->maxX / 15, "Select from 12");
+    mvprintw(screenInfo->maxY / 6 + 1, screenInfo->maxX / 15, "Possible keys");
 
-    mvprintw(screenInfo->maxY / 4, screenInfo->maxX / 20, "Notes from a");
-    mvprintw(screenInfo->maxY / 4 + 1, screenInfo->maxX / 20, "Parent Scale");
+    mvprintw(screenInfo->maxY / 4, screenInfo->maxX / 15, "Notes from a");
+    mvprintw(screenInfo->maxY / 4 + 1, screenInfo->maxX / 15, "Parent Scale");
 }
 
 void drawStopwatch(Model* model, screenInfo* screenInfo){
