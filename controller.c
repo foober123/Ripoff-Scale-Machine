@@ -38,6 +38,7 @@ void update(Model* model, int input) {
             model->isNotePressed = OFF;
             model->toggleList = !model->toggleList;
             if(model->toggleList == OFF){
+            clear();
             } 
             break;
         case KEY_CYCLE_ROOT:
