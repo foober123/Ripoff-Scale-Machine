@@ -17,30 +17,21 @@ keyQuit = (int)'q',
 keyNote = (int)'k',
 keyTime = (int)'t',
 keyResetTime = (int)'r',
-keyList = (int)'l'
-
+keyList = (int)'l',
+keyVoice = (int)'v'
 } controlKey ;
 
 typedef enum {
-    noteON = 1,
-    noteOFF = 0
-} notePressState ;
+    ON = 1,
+    OFF = 0
+} PressState ;
 
-typedef enum {
-    stopwatchON = 1,
-    stopwatchOFF = 0
-} stopwatchRunning ;
-
-typedef enum {
-    listON = 1,
-    listOFF = 0
-} listToggle;
 
 typedef struct {
     controlKey keybind;
-    notePressState isKpressed;
-    stopwatchRunning stopwatch_running;
-    listToggle toggleList;
+    PressState isNotePressed;
+    PressState toggleList;
+    PressState stopwatch_running;
 
     int NoteOrder[12];
     int NoteCounter;
@@ -76,8 +67,8 @@ void initModel(Model* model) {
         model->NoteOrder[i] = i;
     }
     model->NoteCounter = 0;
-    model->isKpressed = noteOFF;
-    model->toggleList = listOFF;
+    model->isNotePressed = OFF;
+    model->toggleList = OFF;
 
     const char* notesTemp[12] = {
         "A", "A#/Bb", "B", "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab"
@@ -149,6 +140,8 @@ void drawHelpBar(screenInfo* screenInfo){
 }
 
 void drawNoteCount(Model *model, screenInfo* screenInfo){
+
+        
         move(screenInfo->maxY / 6, screenInfo->maxX / 4 - 2);
         clrtoeol();
         move(screenInfo->maxY / 6, (screenInfo->maxX - strlen(model->notes[model->NoteOrder[model->NoteCounter]])) - screenInfo->maxX/20);
@@ -169,8 +162,12 @@ void drawStatics(screenInfo* screenInfo){
 
 
     mvprintw(1, (screenInfo->maxX - title_length) / 2, "%s", title);
-    mvprintw(screenInfo->maxY / 6, screenInfo->maxX / 20, "Select From 12");
-    mvprintw(screenInfo->maxY / 6 + 1, screenInfo->maxX / 20, "Possible Keys");
+        
+    mvprintw(screenInfo->maxY / 6, screenInfo->maxX / 20, "Select from 12");
+    mvprintw(screenInfo->maxY / 6 + 1, screenInfo->maxX / 20, "Possible keys");
+
+    mvprintw(screenInfo->maxY / 6 + 3, screenInfo->maxX / 20, "Notes from a");
+    mvprintw(screenInfo->maxY / 6 + 4, screenInfo->maxX / 20, "Parent Scale");
 }
 
 void drawStopwatch(Model* model, screenInfo* screenInfo){
@@ -186,7 +183,7 @@ void render(Model* model, screenInfo* screenInfo) {
     drawStatics(screenInfo);
     drawStopwatch(model, screenInfo);
 
-    if (model->isKpressed) {
+    if (model->isNotePressed) {
     drawNoteCount(model, screenInfo);
     }
 
@@ -203,9 +200,9 @@ void update(Model* model, int input) {
 
     switch (input) {
         case keyNote:
-                if (model->isKpressed == noteOFF) {
+                if (model->isNotePressed == OFF) {
                 model->NoteCounter = 0;
-                model->isKpressed = noteON;
+                model->isNotePressed = ON;
             } else {
 
                 if (model->NoteCounter < 11) {
@@ -217,9 +214,9 @@ void update(Model* model, int input) {
             }
             break;
          case keyTime:
-            if (model->stopwatch_running == stopwatchOFF) {
+            if (model->stopwatch_running == OFF) {
             clock_gettime(CLOCK_MONOTONIC, &model->stopwatch_start);
-            model->stopwatch_running = stopwatchON;
+            model->stopwatch_running = ON;
             } else {
             struct timespec now;
             clock_gettime(CLOCK_MONOTONIC, &now);
@@ -233,13 +230,15 @@ void update(Model* model, int input) {
             model->stopwatch_running = 0;
             model->stopwatch_elapsed = 0;
             break;
-            case keyList:
+        case keyList:
             generatePattern(model->NoteOrder, 12);
-            model->isKpressed = 0;
+            model->isNotePressed = OFF;
             model->toggleList = !model->toggleList;
-            if(model->toggleList == 0){
+            if(model->toggleList == OFF){
             clear();
             } 
+            break;
+        case keyVoice:
             break;
         default:
             break;
