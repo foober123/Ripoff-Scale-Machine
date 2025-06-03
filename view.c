@@ -62,7 +62,7 @@ void drawParentScale(Model *model, screenInfo* screenInfo){
         attron(COLOR_PAIR(1));
         mvprintw(screenInfo->maxY / 4, (screenInfo->maxX - strlen(CHROMATICSCALE[model->parentScaleOrder[model->parentScaleOrderIndex]]) - screenInfo->maxX/15), "%s", CHROMATICSCALE[model->parentScaleOrder[model->parentScaleOrderIndex]]);
         mvprintw(screenInfo->maxY / 4, screenInfo->maxX / 2 - 6, "%d", model->parentScaleOrderIndex + 1);
-        mvprintw(screenInfo->maxY / 4 + 1, screenInfo->maxX / 2 - 6, "%s", CHROMATICSCALE[model->parentScale]);
+        mvprintw(screenInfo->maxY / 4 + 1, (screenInfo->maxX-strlen(CHROMATICSCALE[model->rootNote])) / 2 - 1, "%s", CHROMATICSCALE[model->rootNote]);
 
         attroff(COLOR_PAIR(1));
 }
@@ -92,18 +92,23 @@ void drawStopwatch(Model* model, screenInfo* screenInfo){
 }
 
 void render(Model* model, screenInfo* screenInfo) {
+    
     drawStatics(screenInfo);
     drawStopwatch(model, screenInfo);
 
+    if(!model->toggleList){
 
-
-    if (model->isNotePressed) {
-    drawNoteCount(model, screenInfo);
-    }
+        if (model->isNotePressed) {
+        drawNoteCount(model, screenInfo);
+        }
     
-    if (model->isScaleShown){
-    drawParentScale(model, screenInfo);
+        if (model->isScaleShown){
+        drawParentScale(model, screenInfo);
+        }
+
     }
+
+
 
     drawHelpBar(screenInfo);
 

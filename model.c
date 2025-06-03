@@ -13,7 +13,7 @@ typedef struct {
     int noteOrder[12];
     int noteCounter;
    
-    int parentScale;
+    int rootNote;
     int parentScaleOrder[7];
     int parentScaleOrderIndex;
     const char* notes[12];
@@ -54,17 +54,15 @@ void initModel(Model* model) {
     model->toggleList = OFF;
 
     generatePattern(model->noteOrder, 12);
-    model->parentScale = 0;
+    model->rootNote = 0;
     model->parentScaleOrderIndex = 0;
-    rootToIonian(model->parentScaleOrder, model->parentScale);
+    rootToIonian(model->parentScaleOrder, model->rootNote);
     
     model->stopwatch_running = 0;
     model->stopwatch_elapsed = 0.0;
 }
 
-void initScreenInfo(screenInfo* screenInfo) {
-    getmaxyx(stdscr, screenInfo->maxY, screenInfo->maxX);
-}
+
 
 double get_time_seconds() {
     struct timespec ts;

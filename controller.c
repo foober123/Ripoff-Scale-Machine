@@ -43,8 +43,8 @@ void update(Model* model, int input) {
             break;
         case KEY_CYCLE_ROOT:
             if(model->isScaleShown){
-            model->parentScale = (model->parentScale + 1) % 12;
-            rootToIonian(model->parentScaleOrder, model->parentScale);
+            model->rootNote = (model->rootNote + 1) % 12;
+            rootToIonian(model->parentScaleOrder, model->rootNote);
             generatePattern(model->parentScaleOrder, 7);
             model->parentScaleOrderIndex = 0;
             }

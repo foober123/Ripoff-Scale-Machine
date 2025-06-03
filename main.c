@@ -17,6 +17,9 @@ int maxX;
 
 } screenInfo;
 
+void initScreenInfo(screenInfo* screenInfo) {
+    getmaxyx(stdscr, screenInfo->maxY, screenInfo->maxX);
+}
 
 
 void handle_winch(int sig) {
