@@ -1,27 +1,7 @@
-typedef enum {
-    ON = 1,
-    OFF = 0
-} PressState ;
-
-
-typedef struct {
-    PressState isNotePressed;
-    PressState isScaleShown;
-    PressState toggleList;
-    PressState stopwatch_running;
-
-    int noteOrder[12];
-    int noteCounter;
-   
-    int rootNote;
-    int parentScaleOrder[7];
-    int parentScaleOrderIndex;
-    const char* notes[12];
-
-    struct timespec stopwatch_start;
-    double stopwatch_elapsed;
-} Model;
-
+#include <stdlib.h>
+#include <time.h>
+#include "model.h"
+#include "config.h"
 
 void generatePattern(int* arr, int size){
     for (int i = size - 1;i > 0;i--){

@@ -1,5 +1,9 @@
+#include <ncurses.h>
+#include "model.h"
+#include "config.h"
+#include "string.h"
+
 void listNotes(Model* model, screenInfo* screenInfo){
-    int maxY, maxX;
     const char *title = "Notes:";
     int height = 17, width = 10, starty = (screenInfo->maxY-height)/3, startx = (screenInfo->maxX-width)/2;
     WINDOW *win = newwin(height, width, starty, startx);
@@ -118,5 +122,4 @@ void render(Model* model, screenInfo* screenInfo) {
 
     refresh();
 }
-
 

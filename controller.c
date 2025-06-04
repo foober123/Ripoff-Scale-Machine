@@ -1,3 +1,10 @@
+#include <ncurses.h>
+#include <time.h>
+#include "model.h"
+#include "config.h"
+
+
+
 void update(Model* model, int input) {
 
     switch (input) {
@@ -63,5 +70,4 @@ void update(Model* model, int input) {
             break;
     }
 }
-
 

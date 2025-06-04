@@ -1,3 +1,7 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+
 #define REFRESH_RATE 100
 #define FRAME_DELAY_US (1000000 / REFRESH_RATE)
 
@@ -16,3 +20,13 @@ static const char* CHROMATICSCALE[12] = {
 
 
 static const int MAJOR_SCALE_INTERVALS[] = {0, 2, 4, 5, 7, 9, 11};
+
+
+typedef struct{
+int maxY;
+int maxX;
+
+} screenInfo;
+
+
+#endif
