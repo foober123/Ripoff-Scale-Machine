@@ -1,17 +1,19 @@
 CC = clang
-CFLAGS = -Wall -Wextra -pedantic -std=c99 -D_POSIX_C_SOURCE=200809L
+CFLAGS = -Wall -Wextra -pedantic -std=c99 -D_POSIX_C_SOURCE=200809L -Iinclude
 LDFLAGS = -lncurses
-SRC = main.c model.c view.c controller.c
-OBJ = $(SRC:.c=.o)
-TARGET = main
+SRC = $(wildcard src/*.c)
+OBJ = $(patsubst src/%.c, build/%.o, $(SRC))
+BIN = bin/main
 
-all: $(TARGET)
+all: $(BIN)
 
-$(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+$(BIN): $(OBJ)
+	$(CC) $(OBJ) -o $@ $(LDFLAGS)
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $<
+build/%.o: src/%.c
+	mkdir -p build
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -rf build bin
+
