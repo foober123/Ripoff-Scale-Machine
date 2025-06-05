@@ -1,7 +1,7 @@
 #include <ncurses.h>
 #include "model.h"
 #include "config.h"
-#include "string.h"
+#include <string.h>
 
 void listNotes(Model* model, screenInfo* screenInfo){
     const char *title = "Notes:";
@@ -100,6 +100,10 @@ void render(Model* model, screenInfo* screenInfo) {
     drawStatics(screenInfo);
     drawStopwatch(model, screenInfo);
 
+    if(model->toggleList){
+    listNotes(model, screenInfo);
+    }
+
     if(!model->toggleList){
 
         if (model->isNotePressed) {
@@ -115,10 +119,6 @@ void render(Model* model, screenInfo* screenInfo) {
 
 
     drawHelpBar(screenInfo);
-
-    if(model->toggleList){
-    listNotes(model, screenInfo);
-    }
 
     refresh();
 }

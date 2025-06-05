@@ -9,18 +9,24 @@ void update(Model* model, int input) {
 
     switch (input) {
         case KEY_NOTE:
+
+                if(model->toggleList == ON){
+                break;
+                }
+
                 if (model->isNotePressed == OFF) {
                 model->noteCounter = 0;
                 model->isNotePressed = ON;
                 break;
                 }
 
-                if (model->noteCounter < 11) {
-                    model->noteCounter++;
-                } else {
-                    model->noteCounter = 0;
-                    generatePattern(model->noteOrder, 12);
+
+                model->noteCounter = (model->noteCounter + 1) % NOTES_PER_OCTAVE;
+
+                if (model->noteCounter == 11) {
+                    generatePattern(model->noteOrder, NOTES_PER_OCTAVE);
                 }
+
                 clear();
             break;
          case KEY_TIME:
@@ -41,7 +47,7 @@ void update(Model* model, int input) {
             model->stopwatch_elapsed = 0;
             break;
         case KEY_LIST:
-            generatePattern(model->noteOrder, 12);
+            generatePattern(model->noteOrder, NOTES_PER_OCTAVE);
             model->isNotePressed = OFF;
             model->toggleList = !model->toggleList;
             if(model->toggleList == OFF){
@@ -49,14 +55,24 @@ void update(Model* model, int input) {
             } 
             break;
         case KEY_CYCLE_ROOT:
+
+            if(model->toggleList == ON){
+            break;
+            }
+
             if(model->isScaleShown){
-            model->rootNote = (model->rootNote + 1) % 12;
+            model->rootNote = (model->rootNote + 1) % NOTES_PER_OCTAVE;
             rootToIonian(model->parentScaleOrder, model->rootNote);
             generatePattern(model->parentScaleOrder, 7);
             model->parentScaleOrderIndex = 0;
             }
             break;
         case KEY_CYCLE_PARENT:
+
+            if(model->toggleList == ON){
+            break;
+            }
+
             if(model->isScaleShown == OFF){
             model->isScaleShown = ON;
             model->parentScaleOrderIndex = 0;

@@ -14,19 +14,10 @@
 #define KEY_CYCLE_PARENT 'm'
 #define KEY_CYCLE_ROOT 'n'
 
-static const char* CHROMATICSCALE[12] = {
-        "A", "A#/Bb", "B", "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab"
-    };
+//MUSIC THEORY. DO NOT TOUCH
+#define NOTES_PER_OCTAVE 12
 
-
+static const char* CHROMATICSCALE[NOTES_PER_OCTAVE] = {"A", "A#/Bb", "B", "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab"};
 static const int MAJOR_SCALE_INTERVALS[] = {0, 2, 4, 5, 7, 9, 11};
-
-
-typedef struct{
-int maxY;
-int maxX;
-
-} screenInfo;
-
 
 #endif

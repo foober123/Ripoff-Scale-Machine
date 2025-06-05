@@ -10,6 +10,13 @@
 
 volatile sig_atomic_t resize_flag = 0;
 
+typedef struct{
+int maxY;
+int maxX;
+
+} screenInfo;
+
+
 
 void initScreenInfo(screenInfo* screenInfo) {
     getmaxyx(stdscr, screenInfo->maxY, screenInfo->maxX);
