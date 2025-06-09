@@ -49,7 +49,12 @@ void drawNoteCount(Model *model, screenInfo* screenInfo){
 
         attron(COLOR_PAIR(1));
         mvprintw(screenInfo->maxY / 6, (screenInfo->maxX - strlen(CHROMATICSCALE[model->noteOrder[model->noteCounter]]) - screenInfo->maxX/15), "%s", CHROMATICSCALE[model->noteOrder[model->noteCounter]]);
-        mvprintw(screenInfo->maxY / 6, screenInfo->maxX / 2 - 8, "%d", model->noteCounter + 1);
+        if(model->noteCounter < 9){
+            mvprintw(screenInfo->maxY / 6, screenInfo->maxX / 2 - 6, "%d", model->noteCounter + 1);
+        }
+        else{
+            mvprintw(screenInfo->maxY / 6, screenInfo->maxX / 2 - 7, "%d", model->noteCounter + 1);
+        }
         attroff(COLOR_PAIR(1));
         mvprintw(screenInfo->maxY / 6, (screenInfo->maxX-strlen("out of 12")) / 2, "out of 12");
 

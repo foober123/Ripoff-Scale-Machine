@@ -26,6 +26,12 @@ typedef struct {
     double stopwatch_elapsed;
 } Model;
 
+typedef struct{
+int maxY;
+int maxX;
+
+} screenInfo;
+
 void initModel(Model* model);
 void generatePattern(int* arr, int size);
 void rootToIonian(int* arr, int root);

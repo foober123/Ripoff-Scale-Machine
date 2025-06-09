@@ -3,6 +3,8 @@
 #include "model.h"
 #include "config.h"
 
+
+
 void generatePattern(int* arr, int size){
     for (int i = size - 1;i > 0;i--){
     int j = rand() % (i + 1);
