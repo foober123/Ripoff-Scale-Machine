@@ -1,4 +1,5 @@
 #include <ncurses.h>
+#include <stdio.h>
 #include <time.h>
 #include "model.h"
 #include "config.h"
@@ -20,12 +21,16 @@ void update(Model* model, int input) {
                 break;
                 }
 
+                if(model->noteCounter == NOTES_PER_OCTAVE - 1){
+                model->noteCounter = 0;
+                generatePattern(model->noteOrder, NOTES_PER_OCTAVE);
 
-                model->noteCounter = (model->noteCounter + 1) % NOTES_PER_OCTAVE;
-
-                if (model->noteCounter == 11) {
-                    generatePattern(model->noteOrder, NOTES_PER_OCTAVE);
                 }
+
+
+                model->noteCounter = model->noteCounter + 1;
+
+
 
                 clear();
             break;
@@ -79,7 +84,7 @@ void update(Model* model, int input) {
             generatePattern(model->parentScaleOrder, 7);
             break;
             }
-            
+
             model->parentScaleOrderIndex = (model->parentScaleOrderIndex + 1) % 7;
             break;
         default:

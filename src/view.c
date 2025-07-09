@@ -100,8 +100,13 @@ void drawStopwatch(Model* model, screenInfo* screenInfo){
 
 }
 
+void drawDebuggingValues(Model* model){
+   mvprintw(9, 9, "%d", model->noteCounter);
+
+}
+
 void render(Model* model, screenInfo* screenInfo) {
-    
+    //drawDebuggingValues(model);    
     drawStatics(screenInfo);
     drawStopwatch(model, screenInfo);
 
