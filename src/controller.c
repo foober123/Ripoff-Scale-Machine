@@ -21,16 +21,13 @@ void update(Model* model, int input) {
                 break;
                 }
 
-                if(model->noteCounter == NOTES_PER_OCTAVE - 1){
-                model->noteCounter = 0;
-                generatePattern(model->noteOrder, NOTES_PER_OCTAVE);
-
-                }
-
-
                 model->noteCounter = model->noteCounter + 1;
 
+                if(model->noteCounter == NOTES_PER_OCTAVE){
+                    model->noteCounter = 0;
+                    generatePattern(model->noteOrder, NOTES_PER_OCTAVE);
 
+                }
 
                 clear();
             break;

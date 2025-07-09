@@ -106,7 +106,6 @@ void drawDebuggingValues(Model* model){
 }
 
 void render(Model* model, screenInfo* screenInfo) {
-    //drawDebuggingValues(model);    
     drawStatics(screenInfo);
     drawStopwatch(model, screenInfo);
 
